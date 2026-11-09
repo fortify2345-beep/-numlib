@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from math import exp, log, sqrt, cos, sin, tan, pi, floor
+import numpy as np
 def euler(g: Callable[[float, float], float],
         N: int,
         a: int | float,
@@ -9,12 +9,15 @@ def euler(g: Callable[[float, float], float],
 
     Returns lists (ts, ws)
     """
-    w = y0
+    y0 = np.asarray(y0, dtype = float)
+    w = y0.copy()
     h = (b - a) / N
     t = a
-    ts, ws = [t], [w] 
-    for i in range(1, N+1):
+    ts = a + h * np.arange(N + 1)
+    ws = np.empty((N+1, y0.size))
+    ws[0] = w
+    for i in range(N):
+        t = ts[i]
         w  += h * g(t,w)
-        t += h
-        ts.append(t); ws.append(w)
+        ws[i+1] = w
     return ts, ws
